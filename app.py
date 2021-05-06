@@ -39,6 +39,7 @@ class Contacts(db.Model):
         return self.email
 
 db.create_all()
+
 db.session.commit()
 
 @app.route('/contacts', methods=['POST', 'GET', 'DELETE', 'PUT'])
