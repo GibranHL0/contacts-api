@@ -11,3 +11,4 @@ requests-unixsocket==0.2.0
 simplejson==3.17.0
 SQLAlchemy==1.4.13
 Werkzeug==1.0.1
+Flask-Cors==3.0.10
