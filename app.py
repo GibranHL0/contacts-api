@@ -54,26 +54,33 @@ def contacts():
         company = info.get("company")
         phone = info.get("phone")
         email = info.get("email")
+        contacts_list = []
+        contacts_data = Contacts.query.all()
 
-        new_contact = Contacts(name,last_name,company,phone,email)
-        db.session.add(new_contact)
-        db.session.commit()
+        if contacts_data:
+            contacts_list = [contact.getEmail for contact in contacts_data]
 
-        response = make_response(
-            jsonify(
-                {'data': {
+        if email in contacts_list:
+            response = make_response({'msg': 'Email already exists'}, 206)
+            response.headers['Content-Type'] = "application/json"
+       
+        else:
+            new_contact = Contacts(name,last_name,company,phone,email)
+            db.session.add(new_contact)
+            db.session.commit()
+
+            response = make_response(jsonify({
+                'data': {
                     'email' : email,
                     'name': name,
                     'last_name': last_name,
                     'company': company,
                     'phone': phone,
-                    },
-                'msg': 'Information recieved'
-                }
-            ),
-            200
-        )
-        response.headers['Content-Type'] = "application/json"
+                },
+                'msg': 'Created'
+                }),201)
+            
+            response.headers['Content-Type'] = "application/json"
 
         return response
     
@@ -99,13 +106,7 @@ def contacts():
 
         db.session.commit()
 
-        response = make_response(
-            jsonify(
-                {
-                    'msg': f'{email} deleted'
-                }
-            ),200
-        )
+        response = make_response(jsonify({'msg': f'{email} deleted'}),200)
 
         response.headers['Content-Type'] = "application/json"
 
@@ -129,32 +130,11 @@ def contacts():
 
         db.session.commit()
 
-        response = make_response(
-            jsonify(
-                {
-                    'msg': f'{email} modified'
-                }
-            ),200
-        )
+        response = make_response(jsonify({'msg': f'{email} modified'}),200)
 
         response.headers['Content-Type'] = "application/json"
 
         return response
-
-
-@app.route('/emails', methods=['GET'])
-def emails():
-    contacts_data = Contacts.query.all()
-
-    if not contacts_data:
-        response = make_response(jsonify([]), 200)
-    else:
-        emails_list = [contact.getEmail for contact in contacts_data]
-        response = make_response(jsonify(emails_list), 200)
-    
-    response.headers['Content-Type'] = "application/json"
-
-    return response
 
 if __name__ == '__main__':
     app.run(debug=True)
