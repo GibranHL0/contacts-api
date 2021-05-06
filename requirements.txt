@@ -8,7 +8,6 @@ pylint-flask==0.6
 pylint-plugin-utils==0.6
 requests==2.23.0
 requests-unixsocket==0.2.0
-sessioninstaller==0.0.0
 simplejson==3.17.0
 SQLAlchemy==1.4.13
 Werkzeug==1.0.1
