@@ -56,7 +56,7 @@ def contacts():
         phone = info.get("phone")
         email = info.get("email")
         email_regex = r'^[a-z0-9]+[\._]?[a-z0-9]+[@]\w+[.]\w{2,3}$'
-        name_regex = r'/^([^0-9]*)$/'
+        name_regex = r'^[a-zA-Z_ ]*$'
         contacts_list = []
         contacts_data = Contacts.query.all()
 
@@ -71,6 +71,9 @@ def contacts():
             response.headers['Content-Type'] = "application/json"
         elif not search(name_regex,name) or name == '':
             response = make_response({'msg': 'Name is not valid'}, 206)
+            response.headers['Content-Type'] = "application/json"
+        elif not search(name_regex,last_name) or last_name == '':
+            response = make_response({'msg': 'Last Name is not valid'}, 206)
             response.headers['Content-Type'] = "application/json"
        
         else:
