@@ -3,6 +3,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from config import Config
 from flask_cors import CORS, cross_origin
+from re import search
 
 app = Flask(__name__)
 CORS(app, resources={r"/*": {"origins":"*"}})
@@ -54,6 +55,7 @@ def contacts():
         company = info.get("company")
         phone = info.get("phone")
         email = info.get("email")
+        email_regex = r'^[a-z0-9]+[\._]?[a-z0-9]+[@]\w+[.]\w{2,3}$'
         contacts_list = []
         contacts_data = Contacts.query.all()
 
@@ -62,6 +64,9 @@ def contacts():
 
         if email in contacts_list:
             response = make_response({'msg': 'Email already exists'}, 206)
+            response.headers['Content-Type'] = "application/json"
+        elif not search(email_regex,email) or email == '':
+            response = make_response({'msg': 'Email is not valid'}, 206)
             response.headers['Content-Type'] = "application/json"
        
         else:
@@ -94,23 +99,6 @@ def contacts():
             contacts_list = [contact.serialize for contact in contacts_data]
             response = make_response(jsonify(contacts_list), 200)
         
-        response.headers['Content-Type'] = "application/json"
-
-        return response
-    
-    # DELETE a specific contact
-    elif request.method == 'DELETE':
-        print("here")
-        info = request.get_json()
-        print(request.get_data.email)
-        email = info.get("email")
-
-        Contacts.query.filter(Contacts.email == email).delete()
-
-        db.session.commit()
-
-        response = make_response(jsonify({'msg': f'{email} deleted'}),200)
-
         response.headers['Content-Type'] = "application/json"
 
         return response
