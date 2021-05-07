@@ -100,7 +100,8 @@ def contacts():
     
     # DELETE a specific contact
     elif request.method == 'DELETE':
-        email = request.get_json().get('email')
+        info = request.get_json()
+        email = info.get("email")
 
         Contacts.query.filter(Contacts.email == email).delete()
 
