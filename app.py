@@ -7,7 +7,6 @@ from re import search
 
 app = Flask(__name__)
 CORS(app, resources={r"/*": {"origins":"*"}})
-print(Config.DATABASE_URI)
 app.config['SQLALCHEMY_DATABASE_URI'] = Config.DATABASE_URI
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
