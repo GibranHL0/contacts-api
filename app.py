@@ -139,5 +139,18 @@ def contacts():
 
         return response
 
+
+@app.route('contacts/<email>', methods=['DELETE'])
+def delete_contact(email):
+    Contacts.query.filter(Contacts.email == email).delete()
+
+    db.session.commit()
+
+    response = make_response(jsonify({'msg': f'{email} deleted'}),200)
+
+    response.headers['Content-Type'] = "application/json"
+
+    return response
+
 if __name__ == '__main__':
     app.run(debug=True)
