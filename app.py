@@ -100,7 +100,7 @@ def contacts():
     
     # DELETE a specific contact
     elif request.method == 'DELETE':
-        print(request)
+        print("here")
         info = request.get_json()
         print(info)
         email = info.get("email")
