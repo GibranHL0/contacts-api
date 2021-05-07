@@ -45,7 +45,7 @@ db.create_all()
 
 db.session.commit()
 
-@app.route('/contacts', methods=['POST', 'GET', 'DELETE', 'PUT'])
+@app.route('/contacts', methods=['POST', 'GET', 'PUT'])
 def contacts():
     # Post the information received to the database
     if request.method == 'POST':
