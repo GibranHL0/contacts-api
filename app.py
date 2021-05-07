@@ -140,7 +140,7 @@ def contacts():
         return response
 
 
-@app.route('contacts/<email>', methods=['DELETE'])
+@app.route('/contacts/<email>', methods=['DELETE'])
 def delete_contact(email):
     Contacts.query.filter(Contacts.email == email).delete()
 
