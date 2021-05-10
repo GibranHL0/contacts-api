@@ -47,6 +47,9 @@ db.session.commit()
 
 @app.route('/contacts', methods=['POST', 'GET', 'PUT'])
 def contacts():
+    email_regex = r'^[a-z0-9]+[\._]?[a-z0-9]+[@]\w+[.]\w{2,3}$'
+    name_regex = r'^[a-zA-Z_ ]*$'
+    
     # Post the information received to the database
     if request.method == 'POST':
         info = request.get_json()
@@ -55,8 +58,6 @@ def contacts():
         company = info.get("company")
         phone = info.get("phone")
         email = info.get("email")
-        email_regex = r'^[a-z0-9]+[\._]?[a-z0-9]+[@]\w+[.]\w{2,3}$'
-        name_regex = r'^[a-zA-Z_ ]*$'
         contacts_list = []
         contacts_data = Contacts.query.all()
 
@@ -118,19 +119,39 @@ def contacts():
         company = info.get("company")
         phone = info.get("phone")
         email = info.get("email")
+        contacts_list = []
+        contacts_data = Contacts.query.all()
 
-        contact = Contacts.query.get(email)
-        contact.name = name
-        contact.last_name = last_name
-        contact.company = company
-        contact.phone = phone
-        contact.email = email
+        if contacts_data:
+            contacts_list = [contact.getEmail for contact in contacts_data]
+            contacts_list.remove(email)
 
-        db.session.commit()
+        if email in contacts_list:
+            response = make_response({'msg': 'Email already exists'}, 206)
+            response.headers['Content-Type'] = "application/json"
+        elif not search(email_regex,email) or email == '':
+            response = make_response({'msg': 'Email is not valid'}, 206)
+            response.headers['Content-Type'] = "application/json"
+        elif not search(name_regex,name) or name == '':
+            response = make_response({'msg': 'Name is not valid'}, 206)
+            response.headers['Content-Type'] = "application/json"
+        elif not search(name_regex,last_name) or last_name == '':
+            response = make_response({'msg': 'Last Name is not valid'}, 206)
+            response.headers['Content-Type'] = "application/json"
+        
+        else: 
+            contact = Contacts.query.get(email)
+            contact.name = name
+            contact.last_name = last_name
+            contact.company = company
+            contact.phone = phone
+            contact.email = email
 
-        response = make_response(jsonify({'msg': f'{email} modified'}),200)
+            db.session.commit()
 
-        response.headers['Content-Type'] = "application/json"
+            response = make_response(jsonify({'msg': f'{email} modified'}),200)
+
+            response.headers['Content-Type'] = "application/json"
 
         return response
 
