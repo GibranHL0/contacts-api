@@ -75,6 +75,28 @@ def update_contact(email: str, contact: dict) -> Contact:
     return contact_factory.create(contact)
 
 
+def delete_contact(email: str) -> None:
+    """
+    Delete an existent contact.
+
+    Args:
+        email: email of the contact to be deleted.
+
+    Raises:
+        EmailNotFound: When the contact is not in the db
+    """
+    repo = SQLAlchemyRepository(db.session)
+
+    # Verify if the email exists.
+    exists = validation.check_contact_exist(email, repo)
+
+    if not exists:
+        raise errors.EmailNotFound
+
+    # Delete the contact
+    repo.deletecontact(email)
+
+
 def obtain_contacts(quantity: int) -> List[Contact]:
     """
     Obtain the quantity of contacts specified.
@@ -89,6 +111,6 @@ def obtain_contacts(quantity: int) -> List[Contact]:
     contacts_list = []
 
     if contacts_data:
-        contacts_list = [contact.serialize for contact in contacts_data]
+        contacts_list = [contact.serialize() for contact in contacts_data]
 
     return contacts_list

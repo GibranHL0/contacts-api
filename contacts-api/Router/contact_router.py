@@ -97,6 +97,38 @@ def update_contact(email: str) -> Response:
     return response
 
 
+@app.route('/contacts/<email>', methods=['DELETE'])
+def delete_contact(email: str) -> Response:
+    """
+    Delete an existent contact.
+
+    Args:
+        email: Email of the contact to be deleted.
+
+    Returns:
+        Response including a message and HTTP status code.
+    """
+    message_factory = MessageFactory()
+
+    try:
+        contact_service.delete_contact(email)
+
+    except errors.EmailNotFound:
+        message = message_factory.create('Email not found')
+        response = make_response(message.serialize(), PARTIAL_CONTENT)
+
+    except Exception as error:
+        app.logger.error(error)
+        message = message_factory.create('Something wrong happened')
+        response = make_response(message.serialize(), INTERNAL_ERROR)
+
+    else:
+        message = message_factory.create(f'{email} deleted')
+        response = make_response(message.serialize(), OK)
+
+    return response
+
+
 @app.route('/contacts/<quantity>', methods=['GET'])
 def obtain_contact(quantity: int) -> Response:
     """
