@@ -1,8 +1,9 @@
+"""
 from flask import Flask, request, jsonify, make_response
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from config import Config
-from flask_cors import CORS, cross_origin
+from flask_cors import CORS
 from re import search
 
 app = Flask(__name__)
@@ -137,7 +138,6 @@ def contacts():
             response.headers['Content-Type'] = "application/json"
         elif not search(name_regex,last_name) or last_name == '':
             response = make_response({'msg': 'Last Name is not valid'}, 206)
-            response.headers['Content-Type'] = "application/json"
         
         else: 
             contact = Contacts.query.get(email)
@@ -170,3 +170,4 @@ def delete_contact(email):
 
 if __name__ == '__main__':
     app.run(debug=True)
+"""
