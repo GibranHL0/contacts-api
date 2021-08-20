@@ -1,5 +1,6 @@
 """Provides all the logic behind the endpoint's operations."""
 
+from new_app import app
 from Errors import errors
 from Factory.contact_factory import ContactFactory
 from Logic import validation
@@ -20,15 +21,15 @@ def create_contact(contact_dict: dict) -> Contact:
         Contact created object.
 
     Raises:
-        EmailAlreadyExists: Raise when the email is already on Contacts list.
+        EmailAlreadyExists: Indicate that the email is not unique.
     """
     repo = SQLAlchemyRepository(db.session)
 
-    # Validate if the contact email is already in the DB
+    # Validate if the contact email exists, raise an exception if so.
     exists = validation.check_contact_exist(contact_dict.get('email'), repo)
 
     if exists:
-        raise errors.EmailAlreadyExists(contact_dict.get('email'))
+        raise errors.EmailAlreadyExists
 
     # Validate the contact information. Otherwise raise an exception.
     validation.validate_contact(contact_dict)
@@ -40,7 +41,41 @@ def create_contact(contact_dict: dict) -> Contact:
     return new_contact
 
 
-def obtain_contact(quantity: int) -> List[Contact]:
+def update_contact(email: str, contact: dict) -> Contact:
+    """
+    Update an existent contact.
+
+    Args:
+        email: Previous email of the contact to be updated.
+        contact: Dictionary that contains all the Contact attributes.
+
+    Returns:
+        Contact updated object.
+
+    Raises:
+        EmailNotFound: The email is not in the DB and can't be updated.
+    """
+    repo = SQLAlchemyRepository(db.session)
+
+    # Validate the contact information. Otherwise raise an exception.
+    validation.validate_contact(contact)
+
+    # Validate if the contact email exists, raise an exception if so.
+    exists = validation.check_contact_exist(contact.get('email'), repo)
+
+    if not exists:
+        raise errors.EmailNotFound
+
+    # Updates the contact.
+    repo.updatecontact(email, contact)
+
+    # Creates the factory to create the contact object for the response.
+    contact_factory = ContactFactory()
+
+    return contact_factory.create(contact)
+
+
+def obtain_contacts(quantity: int) -> List[Contact]:
     """
     Obtain the quantity of contacts specified.
 
