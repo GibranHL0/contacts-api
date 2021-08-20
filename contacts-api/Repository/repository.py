@@ -85,8 +85,11 @@ class SQLAlchemyRepository(AbstractRepository):
 
         Args:
             email: The email of the Contact to be obtained.
+
+        Returns:
+            Contact or None according to its existance
         """
-        self.session.query(Contact).get(email)
+        return self.session.query(Contact).get(email)
 
     def getcontacts(self, quantity: int) -> List[Contact]:
         """
@@ -100,13 +103,13 @@ class SQLAlchemyRepository(AbstractRepository):
         """
         return self.session.query(Contact).limit(quantity).all()
 
-    def updatecontact(self, email: str, contact: Contact) -> Contact:
+    def updatecontact(self, email: str, contact: dict) -> Contact:
         """
         Update a Contact info.
 
         Args:
             email: Email of the contact to be updated.
-            contact: Contact to be updated
+            contact: Dict containing all the elements to be updated
         """
         self.session.query(Contact).filter(
             Contact.email == email,
