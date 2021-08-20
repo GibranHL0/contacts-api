@@ -43,12 +43,56 @@ def create_contact() -> Response:
         response = make_response(message.serialize(), PARTIAL_CONTENT)
 
     except Exception as error:
-        print(error)
+        app.logger.error(error)
         message = message_factory.create('Something wrong happened')
         response = make_response(message.serialize(), INTERNAL_ERROR)
 
     else:
         response = make_response(created_contact.serialize(), OK)
+
+    return response
+
+
+@app.route('/contacts/<email>', methods=['PUT'])
+def update_contact(email: str) -> Response:
+    """
+    Update a contact.
+
+    Args:
+        email: Previous email of the contact to be updated.
+
+    Returns:
+        Response including a message and HTTP status code.
+    """
+    contact_data = request.get_json()
+    message_factory = MessageFactory()
+
+    try:
+        updated_contact = contact_service.update_contact(email, contact_data)
+
+    except errors.EmailNotValid:
+        message = message_factory.create('Email is not valid')
+        response = make_response(message.serialize(), PARTIAL_CONTENT)
+
+    except errors.NameNotValid:
+        message = message_factory.create('Name is not valid')
+        response = make_response(message.serialize(), PARTIAL_CONTENT)
+
+    except errors.LastNameNotValid:
+        message = message_factory.create('Last Name is not valid')
+        response = make_response(message.serialize(), PARTIAL_CONTENT)
+
+    except errors.EmailNotFound:
+        message = message_factory.create('Email not found')
+        response = make_response(message.serialize(), PARTIAL_CONTENT)
+
+    except Exception as error:
+        app.logger.error(error)
+        message = message_factory.create('Something wrong happened')
+        response = make_response(message.serialize(), INTERNAL_ERROR)
+
+    else:
+        response = make_response(updated_contact.serialize(), OK)
 
     return response
 
@@ -67,9 +111,10 @@ def obtain_contact(quantity: int) -> Response:
     message_factory = MessageFactory()
 
     try:
-        contacts_list = contact_service.obtain_contact(quantity)
+        contacts_list = contact_service.obtain_contacts(quantity)
 
-    except Exception:
+    except Exception as error:
+        app.logger.error(error)
         message = message_factory.create('Something wrong happened')
         response = make_response(message.serialize(), INTERNAL_ERROR)
 
