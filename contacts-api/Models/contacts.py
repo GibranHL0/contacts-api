@@ -31,7 +31,6 @@ class Contact(db.Model):
         self.phone = contact.get('phone')
         self.email = contact.get('email')
 
-    @property
     def serialize(self) -> dict:
         """
         Serialize the Contact object into a dictionary.
