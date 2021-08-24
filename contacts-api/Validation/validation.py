@@ -62,22 +62,14 @@ def validate_contact(contact: dict) -> None:
         NameNotValid: Raise when the name does not have an appropiate format.
         LastNameNotValid: Raise when the last name doesn't comply the format.
     """
-    email = contact.get('email')
-
-    # Validate if the email is valid
-    valid_email = validate_email(email)
-
-    if not valid_email:
-        raise errors.EmailNotValid(email)
+    # Validate if the email is correct
+    if not validate_email(contact.get('email')):
+        raise errors.EmailNotValid
 
     # Validate if the name is correct
-    valid_name = validate_names(contact.get('name'))
-
-    if not valid_name:
-        raise errors.NameNotValid(contact.get('name'))
+    if not validate_names(contact.get('name')):
+        raise errors.NameNotValid
 
     # Validate if the last_name is correct
-    valid_last_name = validate_names(contact.get('last_name'))
-
-    if not valid_last_name:
+    if not validate_names(contact.get('last_name')):
         raise errors.LastNameNotValid
