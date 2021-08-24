@@ -1,85 +1,149 @@
 """Define contact-api defined exceptions."""
 
+from abc import ABC
+from http import HTTPStatus
 
-class EmailNotValid(Exception):
+
+class Error(ABC, Exception):
+    """Base error class raised when a custom error happened."""
+
+    def __init__(
+        self,
+        message='',
+        code=HTTPStatus.INTERNAL_SERVER_ERROR,
+    ) -> None:
+        """
+        Initialize the exception.
+
+        Args:
+            message: Explanation of the error.
+            code: HTTP code error.
+        """
+        self.msg = message
+        self.code = code
+        super().__init__(self.msg)
+
+
+class EmailNotValid(Error):
     """Exception raised when the email is not valid."""
 
-    def __init__(self, email='', message='Email is not valid') -> None:
+    def __init__(
+        self,
+        message='Email is not valid',
+        code=HTTPStatus.PARTIAL_CONTENT,
+    ) -> None:
         """
         Inititalize the exception.
 
         Args:
-            email: Email that raise the exception (optional)
             message: Explanation of the error.
+            code: HTTP code error.
         """
-        self.email = email
-        self.message = message
-        super().__init__(self.message)
+        self.msg = message
+        self.code = code
+        super().__init__(self.msg, self.code)
 
 
-class EmailNotFound(Exception):
+class EmailNotFound(Error):
     """Exception raised when the email is not found in the DB."""
 
-    def __init__(self, email='', message='Email not found') -> None:
+    def __init__(
+        self,
+        message='Email not found',
+        code=HTTPStatus.PARTIAL_CONTENT,
+    ) -> None:
         """
         Inititalize the exception.
 
         Args:
-            email: Email that raise the exception (optional)
             message: Explanation of the error.
+            code: HTTP code error.
         """
-        self.email = email
-        self.message = message
+        self.msg = message
+        self.code = code
 
-        super().__init__(self.message)
+        super().__init__(self.msg, self.code)
 
 
-class EmailAlreadyExists(Exception):
+class EmailAlreadyExists(Error):
     """Exception raised when the email is already in the Contacts list."""
 
-    def __init__(self, email='', message='Email already exists') -> None:
+    def __init__(
+        self,
+        message='Email already exists',
+        code=HTTPStatus.PARTIAL_CONTENT,
+    ) -> None:
         """
         Initialize the exception.
 
         Args:
-            email: Email that raise the exception (optional)
             message: Explation of the error.
+            code: HTTP error code.
         """
-        self.email = email
-        self.message = message
+        self.msg = message
+        self.code = code
 
-        super().__init__(self.message)
+        super().__init__(self.msg, self.code)
 
 
-class NameNotValid(Exception):
+class NameNotValid(Error):
     """Exception raised when the name is not in the appropiate format."""
 
-    def __init__(self, name='', message='Name is not valid') -> None:
+    def __init__(
+        self,
+        message='Name is not valid',
+        code=HTTPStatus.PARTIAL_CONTENT,
+    ) -> None:
         """
         Initialize the exception.
 
         Args:
-            name: Name that raise the exception (optional)
             message: Explanation of the error.
+            code: HTTP error code.
         """
-        self.name = name
-        self.message = message
+        self.msg = message
+        self.code = code
 
-        super().__init__(self.message)
+        super().__init__(self.msg, self.code)
 
 
-class LastNameNotValid(Exception):
+class LastNameNotValid(Error):
     """Exception raised when the last name is not in the appropiate format."""
 
-    def __init__(self, last_name='', message='Last name is not valid') -> None:
+    def __init__(
+        self,
+        message='Last name is not valid',
+        code=HTTPStatus.PARTIAL_CONTENT,
+    ) -> None:
         """
         Initialize the exception.
 
         Args:
-            last_name: Name that raise the exception (optional)
             message: Explanation of the error.
+            code: HTTP error code.
         """
-        self.last_name = last_name
-        self.message = message
+        self.msg = message
+        self.code = code
 
-        super().__init__(self.message)
+        super().__init__(self.msg, self.code)
+
+
+class InternalError(Error):
+    """Exception raised when something unexpected happened."""
+
+    def __init__(
+        self,
+        message='Something wrong happened',
+        code=HTTPStatus.INTERNAL_SERVER_ERROR,
+    ) -> None:
+        """
+        Initialize the exception.
+
+        Args:
+            message: Explanation of the error.
+            code: HTTP error code.
+        """
+        self.msg = message
+        self.code = code
+
+        super().__init__(self.msg, self.code)
