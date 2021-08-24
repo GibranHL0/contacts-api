@@ -1,7 +1,7 @@
 
 # Contacts API
 
-Flask written API that mades the basic operations and validations for the breakable toy activity "contacts-app".
+Flask written API that makes the basic operations and validations for the breakable toy activity "contacts-app".
 
 ## Authors
 
