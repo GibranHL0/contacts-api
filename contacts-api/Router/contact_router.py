@@ -1,15 +1,12 @@
 """Request handler for the Contact endpoint."""
 
-from Errors import errors
+from Errors.errors import Error
 from Factory.message_factory import MessageFactory
 from flask import request, make_response, jsonify
 from flask.wrappers import Response
+from http import HTTPStatus
 from new_app import app
 from Services import contact_service
-
-OK = 200
-PARTIAL_CONTENT = 206
-INTERNAL_ERROR = 500
 
 
 @app.route('/contacts', methods=['POST'])
@@ -26,29 +23,12 @@ def create_contact() -> Response:
     try:
         created_contact = contact_service.create_contact(contact_dict)
 
-    except errors.EmailAlreadyExists:
-        message = message_factory.create('Email already exists')
-        response = make_response(message.serialize(), PARTIAL_CONTENT)
-
-    except errors.EmailNotValid:
-        message = message_factory.create('Email is not valid')
-        response = make_response(message.serialize(), PARTIAL_CONTENT)
-
-    except errors.NameNotValid:
-        message = message_factory.create('Name is not valid')
-        response = make_response(message.serialize(), PARTIAL_CONTENT)
-
-    except errors.LastNameNotValid:
-        message = message_factory.create('Last Name is not valid')
-        response = make_response(message.serialize(), PARTIAL_CONTENT)
-
-    except Exception as error:
-        app.logger.error(error)
-        message = message_factory.create('Something wrong happened')
-        response = make_response(message.serialize(), INTERNAL_ERROR)
+    except Error as error:
+        message = message_factory.create(error.msg)
+        response = make_response(message.serialize(), error.code)
 
     else:
-        response = make_response(created_contact.serialize(), OK)
+        response = make_response(created_contact.serialize(), HTTPStatus.OK)
 
     return response
 
@@ -70,29 +50,12 @@ def update_contact(email: str) -> Response:
     try:
         updated_contact = contact_service.update_contact(email, contact_data)
 
-    except errors.EmailNotValid:
-        message = message_factory.create('Email is not valid')
-        response = make_response(message.serialize(), PARTIAL_CONTENT)
-
-    except errors.NameNotValid:
-        message = message_factory.create('Name is not valid')
-        response = make_response(message.serialize(), PARTIAL_CONTENT)
-
-    except errors.LastNameNotValid:
-        message = message_factory.create('Last Name is not valid')
-        response = make_response(message.serialize(), PARTIAL_CONTENT)
-
-    except errors.EmailNotFound:
-        message = message_factory.create('Email not found')
-        response = make_response(message.serialize(), PARTIAL_CONTENT)
-
-    except Exception as error:
-        app.logger.error(error)
-        message = message_factory.create('Something wrong happened')
-        response = make_response(message.serialize(), INTERNAL_ERROR)
+    except Error as error:
+        message = message_factory.create(error.msg)
+        response = make_response(message.serialize(), error.code)
 
     else:
-        response = make_response(updated_contact.serialize(), OK)
+        response = make_response(updated_contact.serialize(), HTTPStatus.OK)
 
     return response
 
@@ -113,18 +76,13 @@ def delete_contact(email: str) -> Response:
     try:
         contact_service.delete_contact(email)
 
-    except errors.EmailNotFound:
-        message = message_factory.create('Email not found')
-        response = make_response(message.serialize(), PARTIAL_CONTENT)
-
-    except Exception as error:
-        app.logger.error(error)
-        message = message_factory.create('Something wrong happened')
-        response = make_response(message.serialize(), INTERNAL_ERROR)
+    except Error as error:
+        message = message_factory.create(error.msg)
+        response = make_response(message.serialize(), error.code)
 
     else:
         message = message_factory.create(f'{email} deleted')
-        response = make_response(message.serialize(), OK)
+        response = make_response(message.serialize(), HTTPStatus.OK)
 
     return response
 
@@ -145,12 +103,11 @@ def obtain_contact(quantity: int) -> Response:
     try:
         contacts_list = contact_service.obtain_contacts(quantity)
 
-    except Exception as error:
-        app.logger.error(error)
-        message = message_factory.create('Something wrong happened')
-        response = make_response(message.serialize(), INTERNAL_ERROR)
+    except Error as error:
+        message = message_factory.create(error.msg)
+        response = make_response(message.serialize(), error.code)
 
     else:
-        response = make_response(jsonify(contacts_list), OK)
+        response = make_response(jsonify(contacts_list), HTTPStatus.OK)
 
     return response
