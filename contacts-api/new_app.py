@@ -1,9 +1,9 @@
 """Initialize the project."""
 
-from Factory.app_factory import AppFactory
+from Factory.app_factory import flask_app
 from Factory.database_factory import DBFactory
 
-app = AppFactory().create()
+app = flask_app
 db = DBFactory(app).create()
 
 # All the view functions (the ones with a route() decorator on top) have

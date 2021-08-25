@@ -7,7 +7,7 @@ from flask_cors import CORS
 import logging
 
 
-class AppFactory(Factory):
+class __AppFactory(Factory):
     """Creates App Objects."""
 
     def __init__(self) -> None:
@@ -42,3 +42,6 @@ class AppFactory(Factory):
         """Apply the configuration into the app."""
         self.app.config['SQLALCHEMY_DATABASE_URI'] = Config.DATABASE_URI
         self.app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
+
+flask_app = __AppFactory().create()
